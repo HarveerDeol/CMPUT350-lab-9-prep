@@ -138,7 +138,27 @@ int main() {
         //
         // Use SOFT_LIMIT_PERCENT and HARD_LIMIT_PERCENT to parameterize the green and red
         // line positions.
-        camera.setCameraCenter({player.position.x, WINDOW_HEIGHT * 0.5f});
+        // camera.setCameraCenter({player.position.x, WINDOW_HEIGHT * 0.5f});
+
+        const float softLeft   = WINDOW_WIDTH * SOFT_LIMIT_PERCENT;
+        const float softRight  = WINDOW_WIDTH * (1.f - SOFT_LIMIT_PERCENT);
+        const float hardLeft   = WINDOW_WIDTH * HARD_LIMIT_PERCENT;
+        const float hardRight  = WINDOW_WIDTH * (1.f - HARD_LIMIT_PERCENT);
+
+        float playerWinX = camera.worldToWindow(player.position).x;
+
+        if (playerWinX < softLeft) {
+            camera.translateWindow({SOFT_CAMERA_ALPHA * (playerWinX - softLeft), 0.f});
+        } else if (playerWinX > softRight) {
+            camera.translateWindow({SOFT_CAMERA_ALPHA * (playerWinX - softRight), 0.f});
+        }
+
+        playerWinX = camera.worldToWindow(player.position).x;
+        if (playerWinX < hardLeft) {
+            camera.translateWindow({playerWinX - hardLeft, 0.f});
+        } else if (playerWinX > hardRight) {
+            camera.translateWindow({playerWinX - hardRight, 0.f});
+        }
 
         worldView.setCenter(camera.getCameraCenter());
         window.clear(sf::Color::Black);
